@@ -9,7 +9,7 @@ from io import BytesIO
 from googleapiclient import discovery
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
-import json
+# import json
 
 
 # Собственный фильтр, проверяющий юзера на админа
@@ -105,11 +105,50 @@ async def count_files_in_folder(service: discovery.Resource, folder_id: str):
 
 async def google_api_client(google_config: GoogleDrive):
     # Путь к файлу с учетными данными для доступа к Google Диску
-    credentials_data = json.loads(google_config.credentials_json)
+    # credentials_data = json.loads(google_config.credentials_json)
+    credentials_data = {"type": "service_account",
+                        "project_id": "cogent-task-317112",
+                        "private_key_id": "b27c002652141a5b90460e1fd8c1990a0361c01e",
+                        "private_key": "-----BEGIN PRIVATE "
+                                       "KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCnO7EA6yCRx21N"
+                                       "\niGdtZ+H2XcSRrGBRC5w9KEv6tLDyAsGg8aq3R0a3ojP2nFpsTc0xBQucuDGxZQRz\n+d6Z4eF7"
+                                       "/5j1smCXcq1AlQILNhZCxOjKlItA6dCNXq45F3DIy90cEUN5IOZ1B81X"
+                                       "\nJD3SWIF5hko0cl2Z8RJyWyI7OUh+8A32tfzgGNrkGabPssDeMjQaFlKH4injAVgk\nebimC604"
+                                       "+68rtzImAold9w57AeIZsVdHDgFixEdRJO2xW9OsRIRtVPRBfU5lH4d0"
+                                       "\nnjmF9CVKjSS5cSwYBzLPspi05meweYyqRGBAJLVwkeizTKbzcb5G8r5ehNL40KSR"
+                                       "\n6x8L7XtLAgMBAAECggEAQkn8/bo2LNL6VrNtHAcDoN7GXmAPxdBuXCevBm+9fBDv"
+                                       "\no9Znr0LHm17mbijIBwpH/dhcJAE3YXQDcd1oCWNqN/a3MR1GAIJqfqESMFN+O3VG"
+                                       "\nOZbsJA0KqB8RvHu4Lz/wI4IMVuVdtKIlGRe6kbiXig5bN7Llu3G9uCq7xPIN9JKb"
+                                       "\nTRhveJVOa8vWwX5gxwTHjOj2Nifxf9AJoJWG70JJVtRkvtcJFzEwJQpzoKz/6sku"
+                                       "\nFvJRt8uID3D8ERexGDWghhjy3ECUA5zPqgvAeWlkYszhJAi1rzocJeqbUDx4UT3"
+                                       "+\nVdokAu5zhM9s3vuuL0cwxBHy8Xv2ObFGL1icn7fxsQKBgQDPrDX1ZvKZM31AynT1\n0vbNI"
+                                       "+Wq4tNaqG0QSBM03cIyrJn6ksErlEFSaNwZjO1ho0KppJGJ7C/Lj0FFbeYe\n4zWftHmtDCuRqd"
+                                       "/YaxHLVGYh2k9CBJb8fatioFoB3p60uh1V4mF6kHo5zRyYRrtW"
+                                       "\nhA369fkxlREBdKZZsgmbzGQkxQKBgQDOJls/JB4CIyMktiNXTIhC+ePqrwdxFNdR"
+                                       "\nBP1VKbJODd9QpB5UysUkr1lteo8+V1IcfxrDPj1K1IEExteeW4c6sgXSBsq6Ylpl"
+                                       "\ng6vSXOVnsjcHBWeFmAj2eq+htUUIbF/iT0M8b0CfHzisOXn8qZizax8f/7jXlw0k\n46Mxc"
+                                       "+DAzwKBgBideOfVg/vUtovvc12P2+EE2DwhFpwwSn0bjes+Pb5z5uxkaLEZ\nqYRzGWON6LUh"
+                                       "/MzOzNFkRWYDXOE13YjbtYdwhNuWDbP+RqIITtui7Vgl4C8bDCpx"
+                                       "\nWtcd2o1OLdGOHdwIMTWt2k7vmOwTtjDTBjUw4pCV8qYRhYYsLCdjWpthAoGAOV2J"
+                                       "\nFLf7NcMLW4LnsLpWTLT3DG5qVrhi9mO6D0HMIVZQ50LUQeovE/dLnmB1jfaEnfNs"
+                                       "\nwhoGulUKFgczJxj3N4kkf35uWZFW8FrErIQ3PjTkhSqm1REqpVQcnZYwwJhP0k0W"
+                                       "\nO7IFvIHWpm5UGNAk8wCDJ8dka3HYMYS6+97wExcCgYBb9IvabJ8OeNTPjN5kyiKg\ny"
+                                       "/LlrQIRkCZNKe/wLUaoniJhLjbzccoAjsTE13f5WGRzx+CA2YOpknTHfFvysrtm"
+                                       "\n3dsFBs4SoamUP5cznGtcB2fM2choaiPYFu652nXGr+vF12utPc9ZVeLMkcda24J7"
+                                       "\nSrLNrlPf3yjGogqb+ooGAg==\n-----END PRIVATE KEY-----\n",
+                        "client_email": "flowergrammerbot@cogent-task-317112.iam.gserviceaccount.com",
+                        "client_id": "115563588681599898874",
+                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                        "token_uri": "https://oauth2.googleapis.com/token",
+                        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/flowergrammerbot"
+                                                "%40cogent-task-317112.iam.gserviceaccount.com",
+                        "universe_domain": "googleapis.com"
+                        }
     credentials = service_account.Credentials.from_service_account_info(credentials_data,
-                                                                            scopes=[
-                                                                                'https://www.googleapis.com/auth/drive']
-                                                                            )
+                                                                        scopes=[
+                                                                            'https://www.googleapis.com/auth/drive']
+                                                                        )
     return build('drive', 'v3', credentials=credentials)
 
 
