@@ -9,6 +9,7 @@ from io import BytesIO
 from googleapiclient import discovery
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
+import json
 
 
 # Собственный фильтр, проверяющий юзера на админа
@@ -104,10 +105,10 @@ async def count_files_in_folder(service: discovery.Resource, folder_id: str):
 
 async def google_api_client(google_config: GoogleDrive):
     # Путь к файлу с учетными данными для доступа к Google Диску
-    credentials_file = google_config.credentials_path
+    credentials_data = json.loads(google_config.credentials_json)
 
     # Аутентификация и создание клиента Google API
-    credentials = service_account.Credentials.from_service_account_file(credentials_file,
+    credentials = service_account.Credentials.from_service_account_info(credentials_data,
                                                                         scopes=['https://www.googleapis.com/auth/drive']
                                                                         )
     return build('drive', 'v3', credentials=credentials)

@@ -2,25 +2,17 @@ name: Deploy to Raspberry Pi
 on:
   push:
     branches:
-      - main  # или замените на вашу основную ветку
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest  # или выберите подходящий образ, совместимый с вашим Raspberry Pi
-
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.11.3  # замените на нужную версию Python
-
-    - name: Install dependencies
+    - name: Stop previous bot process
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt  # замените на ваш файл зависимостей
+        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'pkill -f bot.py' || true
 
     - name: Update repository
       env:
@@ -31,12 +23,6 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh -o StrictHostKeyChecking=no master@185.155.17.223 'cd FlowergrammerBot && git pull'
 
-    - name: Stop previous bot process
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      run: |
-        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'pkill -f bot.py' || true
-
     - name: Start new bot process
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -46,4 +32,4 @@ jobs:
         FLOWER_FOLDER_NAME: ${{ secrets.FLOWER_FOLDER_NAME }}
         FOLDER_URL: ${{ secrets.FOLDER_URL }}
       run: |
-        ssh -o StrictHostKeyChecking=no master@185.155.17.223 "env SSH_PRIVATE_KEY='$SSH_PRIVATE_KEY' BOT_TOKEN='$BOT_TOKEN' ADMIN_IDS='$ADMIN_IDS' CREDENTIALS_FILE='$CREDENTIALS_FILE' FLOWER_FOLDER_NAME='$FLOWER_FOLDER_NAME' FOLDER_URL='$FOLDER_URL' nohup /home/master/.pyenv/shims/python FlowergrammerBot/bot.py"
+        ssh -o StrictHostKeyChecking=no master@185.155.17.223 "env SSH_PRIVATE_KEY='$SSH_PRIVATE_KEY' BOT_TOKEN='$BOT_TOKEN' ADMIN_IDS='$ADMIN_IDS' CREDENTIALS_FILE='$CREDENTIALS_FILE' FLOWER_FOLDER_NAME='$FLOWER_FOLDER_NAME' FOLDER_URL='$FOLDER_URL' nohup /home/master/.pyenv/shims/python FlowergrammerBot/bot.py &"

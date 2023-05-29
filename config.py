@@ -10,7 +10,7 @@ class TgBot:
 
 @dataclass
 class GoogleDrive:
-    credentials_path: str
+    credentials_json: str
     flower_folder_name: str
     folder_url: str
 
@@ -26,6 +26,6 @@ def load_config() -> Config:
     print("ADMIN_IDS:", os.environ.get('ADMIN_IDS'))
     return Config(tg_bot=TgBot(token=os.environ['BOT_TOKEN'],
                                admin_ids=list(map(int, os.environ['ADMIN_IDS'].split(',')))),
-                  google_drive=GoogleDrive(credentials_path=os.environ['CREDENTIALS_FILE'],
+                  google_drive=GoogleDrive(credentials_json=os.environ['CREDENTIALS_JSON'],
                                            flower_folder_name=os.environ['FLOWER_FOLDER_NAME'],
                                            folder_url=os.environ['FOLDER_URL']))
