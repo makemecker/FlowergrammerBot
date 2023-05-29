@@ -41,6 +41,5 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        python --version
-        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'python --version'
-        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'cd FlowergrammerBot && python bot.py'
+        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'python3 --version'
+        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'cd FlowergrammerBot && python3 bot.py'
