@@ -40,5 +40,10 @@ jobs:
     - name: Start new bot process
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        ADMIN_IDS: ${{ secrets.ADMIN_IDS }}
+        CREDENTIALS_FILE: ${{ secrets.CREDENTIALS_FILE }}
+        FLOWER_FOLDER_NAME: ${{ secrets.FLOWER_FOLDER_NAME }}
+        FOLDER_URL: ${{ secrets.FOLDER_URL }}
       run: |
         ssh -o StrictHostKeyChecking=no master@185.155.17.223 '/home/master/.pyenv/shims/python FlowergrammerBot/bot.py'
