@@ -22,6 +22,8 @@ class Config:
 
 
 def load_config() -> Config:
+    env: Env = Env()
+    env.read_env(path)
     return Config(tg_bot=TgBot(token=os.environ['BOT_TOKEN'],
                                admin_ids=list(map(int, os.environ['ADMIN_IDS'].split(',')))),
                   google_drive=GoogleDrive(credentials_path=os.environ['CREDENTIALS_FILE'],
