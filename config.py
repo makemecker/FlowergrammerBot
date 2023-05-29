@@ -22,8 +22,6 @@ class Config:
 
 
 def load_config() -> Config:
-    print("BOT_TOKEN:", os.environ.get('BOT_TOKEN'))
-    print("ADMIN_IDS:", os.environ.get('ADMIN_IDS'))
     return Config(tg_bot=TgBot(token=os.environ['BOT_TOKEN'],
                                admin_ids=list(map(int, os.environ['ADMIN_IDS'].split(',')))),
                   google_drive=GoogleDrive(credentials_json=os.environ['CREDENTIALS_JSON'],

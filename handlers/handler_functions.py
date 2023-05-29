@@ -107,11 +107,23 @@ async def google_api_client(google_config: GoogleDrive):
     # Путь к файлу с учетными данными для доступа к Google Диску
     credentials_data = json.loads(google_config.credentials_json)
 
-    # Аутентификация и создание клиента Google API
-    credentials = service_account.Credentials.from_service_account_info(credentials_data,
-                                                                        scopes=['https://www.googleapis.com/auth/drive']
-                                                                        )
-    return build('drive', 'v3', credentials=credentials)
+    try:
+        credentials = service_account.Credentials.from_service_account_info(credentials_data,
+                                                                            scopes=[
+                                                                                'https://www.googleapis.com/auth/drive']
+                                                                            )
+        if credentials.valid:
+            # Учетные данные валидны
+            print("Подключение к Google API Drive успешно установлено.")
+            return build('drive', 'v3', credentials=credentials)
+        else:
+            # Учетные данные недействительны
+            print("Ошибка: Учетные данные для Google API Drive недействительны.")
+            return None
+    except Exception as e:
+        # Обработка ошибок при подключении
+        print("Ошибка при подключении к Google API Drive:", str(e))
+        return None
 
 
 async def get_username_folder_id(service: discovery.Resource, flower_folder_name: str, username: str) -> str:
