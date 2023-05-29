@@ -5,7 +5,6 @@ from config import Config, load_config
 from handlers import admin_handlers, user_handlers
 
 
-# todo: Защитить .env и credentials.json на raspberry pi
 # todo: Сделать непрерывное развертывание через github на raspberry pi
 
 # Функция конфигурирования и запуска бота
