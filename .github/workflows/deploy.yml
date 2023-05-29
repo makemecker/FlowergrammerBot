@@ -35,7 +35,7 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'pkill -f bot.py'
+        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'pkill -f bot.py' || true
 
     - name: Start new bot process
       env:
