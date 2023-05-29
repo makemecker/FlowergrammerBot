@@ -29,7 +29,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh master@185.155.17.223 'cd FlowergrammerBot && git pull'
+        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'cd FlowergrammerBot && git pull'
 
     - name: Stop previous bot process
       env:
