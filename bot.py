@@ -6,7 +6,20 @@ from config import Config, load_config
 from handlers import admin_handlers, user_handlers
 
 
-# todo: Сделать непрерывное развертывание через github на raspberry pi
+# todo сделать отдельную ветку для разработки
+# import os
+# from dotenv import load_dotenv
+#
+# # Загрузка значений переменных окружения из файла .env
+# load_dotenv()
+#
+# # Теперь вы можете использовать переменные окружения в вашем коде
+# bot_token = os.getenv('BOT_TOKEN')
+# admin_ids = os.getenv('ADMIN_IDS')
+# credentials_json = os.getenv('CREDENTIALS_JSON')
+# flower_folder_name = os.getenv('FLOWER_FOLDER_NAME')
+# folder_url = os.getenv('FOLDER_URL')
+
 
 # Функция конфигурирования и запуска бота
 async def main() -> None:
