@@ -35,16 +35,10 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
         ssh -o StrictHostKeyChecking=no master@185.155.17.223 'pkill -f bot.py'
 
     - name: Start new bot process
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
         ssh -o StrictHostKeyChecking=no master@185.155.17.223 'cd FlowergrammerBot && python bot.py'
