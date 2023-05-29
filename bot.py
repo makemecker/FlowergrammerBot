@@ -1,8 +1,12 @@
+import logging
 import asyncio
 from aiogram import Bot, Dispatcher
 from config import Config, load_config
 from handlers import admin_handlers, user_handlers
 
+
+# todo: Защитить .env и credentials.json на raspberry pi
+# todo: Сделать непрерывное развертывание через github на raspberry pi
 
 # Функция конфигурирования и запуска бота
 async def main() -> None:
@@ -22,4 +26,11 @@ async def main() -> None:
 
 
 if __name__ == '__main__':
+    # Настройка логирования
+    logging.basicConfig(
+        level=logging.ERROR,  # Уровень логирования (в данном случае, только ошибки)
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',  # Формат записи логов
+        filename='bot.log',  # Имя файла логов
+    )
+    # Запуск бота
     asyncio.run(main())
