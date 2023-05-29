@@ -47,5 +47,4 @@ jobs:
         FOLDER_URL: ${{ secrets.FOLDER_URL }}
       run: |
         echo "ADMIN_IDS: $ADMIN_IDS"
-        ssh -o StrictHostKeyChecking=no master@185.155.17.223 'echo $ADMIN_IDS'
         ssh -o StrictHostKeyChecking=no master@185.155.17.223 'env SSH_PRIVATE_KEY="$SSH_PRIVATE_KEY" BOT_TOKEN="$BOT_TOKEN" ADMIN_IDS="$ADMIN_IDS" CREDENTIALS_FILE="$CREDENTIALS_FILE" FLOWER_FOLDER_NAME="$FLOWER_FOLDER_NAME" FOLDER_URL="$FOLDER_URL" /home/master/.pyenv/shims/python FlowergrammerBot/bot.py'
