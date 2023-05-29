@@ -74,7 +74,7 @@ async def save_to_google_drive(username: str, content: Document | PhotoSize, bot
 
         # Отправляем сообщение в чат со ссылкой на сохраненный документ
         if file_id:
-            return True
+            return await flower_count(username=username, google_config=google_config)
         else:
             return False
 

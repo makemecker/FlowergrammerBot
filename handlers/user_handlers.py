@@ -54,10 +54,11 @@ async def process_size_command(message: Message, google_config: GoogleDrive):
 async def process_doc(message: Message, bot: Bot, google_config: GoogleDrive):
     await message.answer(text=LEXICON['loading'])
     content = message.document if message.document else message.photo[-1]
-    if await save_to_google_drive(username=message.from_user.username,
-                                  content=content, bot=bot,
-                                  google_config=google_config):
-        await message.answer(text=LEXICON['success'])
+    output_flower_count = await save_to_google_drive(username=message.from_user.username,
+                                                     content=content, bot=bot,
+                                                     google_config=google_config)
+    if output_flower_count:
+        await message.answer(text=LEXICON['success'] + str(output_flower_count))
     else:
         await message.answer(text=LEXICON['error'])
 
