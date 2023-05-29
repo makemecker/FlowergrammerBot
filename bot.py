@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import asyncio
 from aiogram import Bot, Dispatcher
@@ -5,7 +7,6 @@ from config import Config, load_config
 from handlers import admin_handlers, user_handlers
 
 
-# -*- coding: utf-8 -*-
 # todo: Сделать непрерывное развертывание через github на raspberry pi
 
 # Функция конфигурирования и запуска бота
