@@ -35,4 +35,4 @@ jobs:
         FLOWER_FOLDER_NAME: ${{ secrets.FLOWER_FOLDER_NAME }}
         FOLDER_URL: ${{ secrets.FOLDER_URL }}
       run: |
-        ssh -o StrictHostKeyChecking=no master@185.155.17.223 "env SSH_PRIVATE_KEY='$SSH_PRIVATE_KEY' BOT_TOKEN='$BOT_TOKEN' ADMIN_IDS='$ADMIN_IDS' CREDENTIALS_JSON='CREDENTIALS_JSON' FLOWER_FOLDER_NAME='$FLOWER_FOLDER_NAME' FOLDER_URL='$FOLDER_URL' nohup /home/master/.pyenv/shims/python FlowergrammerBot/bot.py"
+        ssh -o StrictHostKeyChecking=no master@185.155.17.223 "env SSH_PRIVATE_KEY='$SSH_PRIVATE_KEY' BOT_TOKEN='$BOT_TOKEN' ADMIN_IDS='$ADMIN_IDS' CREDENTIALS_JSON='CREDENTIALS_JSON' FLOWER_FOLDER_NAME='$FLOWER_FOLDER_NAME' FOLDER_URL='$FOLDER_URL' nohup /home/master/.pyenv/shims/python FlowergrammerBot/bot.py &"
