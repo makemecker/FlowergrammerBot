@@ -23,10 +23,19 @@ jobs:
         pip install -r requirements.txt  # замените на ваш файл зависимостей
 
     - name: Update repository
-      run: ssh master@185.155.17.223 'cd FlowergrammerBot && git pull'
+      run: |
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh master@185.155.17.223 'cd FlowergrammerBot && git pull'
 
     - name: Stop previous bot process
-      run: ssh master@185.155.17.223 'pkill -f bot.py'
+      run: |
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh master@185.155.17.223 'pkill -f bot.py'
 
     - name: Start new bot process
-      run: ssh master@185.155.17.223 'cd FlowergrammerBot && python bot.py'
+      run: |
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh master@185.155.17.223 'cd FlowergrammerBot && python bot.py'
