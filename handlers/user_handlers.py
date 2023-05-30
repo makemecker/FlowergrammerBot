@@ -45,8 +45,9 @@ async def process_no_username(message: Message):
 @router.message(Command(commands='size'))
 async def process_size_command(message: Message, google_config: GoogleDrive):
     await message.answer(text=LEXICON['loading'])
-    await message.answer(text=f'{await flower_count(username=message.from_user.username, google_config=google_config)} '
-                              f'- {LEXICON["/size"]}')
+    output_flower_count = await flower_count(username=message.from_user.username,
+                                             google_config=google_config)
+    await message.answer(text=LEXICON['/size'].format(str(output_flower_count)))
 
 
 # Этот хэндлер будет срабатывать на отправку боту фото в виде документа или просто фото
@@ -58,7 +59,7 @@ async def process_doc(message: Message, bot: Bot, google_config: GoogleDrive):
                                                      content=content, bot=bot,
                                                      google_config=google_config)
     if output_flower_count:
-        await message.answer(text=LEXICON['success'] + str(output_flower_count))
+        await message.answer(text=LEXICON['success'].format(str(output_flower_count)))
     else:
         await message.answer(text=LEXICON['error'])
 
