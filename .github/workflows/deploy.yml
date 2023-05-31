@@ -1,0 +1,20 @@
+name: Deploy to Raspberry Pi
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # или выберите подходящий образ, совместимый с вашим Raspberry Pi
+    steps:
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.RPI_IP_ADDRESS }}
+          username: ${{ secrets.RPI_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pkill -f bot.py && 
+            git pull && sleep 5 && nohup /home/master/.pyenv/shims/python FlowergrammerBot/bot.py &'

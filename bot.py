@@ -5,7 +5,11 @@ from config import Config, load_config
 from handlers import admin_handlers, user_handlers
 
 
-# todo: Сделать непрерывное развертывание через github на raspberry pi
+# todo: Сделать непрерывное развертывание через github с помощью GitActions на raspberry pi: после push обновлений из
+#  pycharm на github запускается workflows, который подключается к raspberry pi по ssh, останавливает текущего бота,
+#  выполняет git pull origin main и запускает обновленного бота. Для этого создать правильный
+#  .github/workflows/deploy.ml
+# todo: защитить файлы .env и credentials.json на raspberry pi
 
 # Функция конфигурирования и запуска бота
 async def main() -> None:
