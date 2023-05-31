@@ -16,5 +16,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pkill -f bot.py && 
-            git pull && sleep 5 && nohup /home/master/.pyenv/shims/python FlowergrammerBot/bot.py &'
+            ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd FlowergrammerBot && 
+            pkill -f bot.py && git pull && sleep 3 && nohup /home/master/.pyenv/shims/python bot.py &'
