@@ -17,7 +17,11 @@ jobs:
             port: ${{ secrets.RPI_PORT }}
             script: |
               cd FlowergrammerBot
+              echo "Stopping bot..."
               pkill -f bot.py
+              echo "Pulling latest code..."
               git pull
+              echo "Sleeping for 3 seconds..."
               sleep 3
+              echo "Starting bot..."
               nohup /home/master/.pyenv/shims/python bot.py &
