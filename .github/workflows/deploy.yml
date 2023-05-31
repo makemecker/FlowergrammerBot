@@ -11,10 +11,13 @@ jobs:
       - name: SSH and Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.RPI_IP_ADDRESS }}
-          username: ${{ secrets.RPI_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd FlowergrammerBot && 
-            pkill -f bot.py && git pull && sleep 3 && nohup /home/master/.pyenv/shims/python bot.py &'
+            host: ${{ secrets.RPI_IP_ADDRESS }}
+            username: ${{ secrets.RPI_USERNAME }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            port: ${{ secrets.RPI_PORT }}
+            script: |
+              cd FlowergrammerBot
+              pkill -f bot.py
+              git pull
+              sleep 3
+              nohup /home/master/.pyenv/shims/python bot.py &
