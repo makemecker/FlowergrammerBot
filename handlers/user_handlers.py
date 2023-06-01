@@ -1,3 +1,4 @@
+from typing import List
 from aiogram import Router
 from aiogram.filters import Command, CommandStart, Text, and_f, or_f
 from aiogram.types import Message
@@ -6,6 +7,7 @@ from handlers.handler_functions import save_to_google_drive, flower_count
 from aiogram import F
 from config import GoogleDrive
 from aiogram import Bot
+from aiogram_media_group import media_group_handler
 
 # Инициализируем роутер уровня модуля
 router: Router = Router()
@@ -50,14 +52,29 @@ async def process_size_command(message: Message, google_config: GoogleDrive):
     await message.answer(text=LEXICON['/size'].format(str(output_flower_count)))
 
 
+# Этот хэндлер будет срабатывать на альбомы
+@router.message(F.media_group_id)
+@media_group_handler
+async def album_handler(messages: List[Message], bot: Bot, google_config: GoogleDrive):
+    await messages[0].answer(text=LEXICON['loading'])
+    for message in messages:
+        content = message.document if message.document else message.photo[-1]
+        await save_to_google_drive(username=message.from_user.username, content=content, content_in_group=True,
+                                   bot=bot, google_config=google_config)
+    output_flower_count = await flower_count(username=messages[0].from_user.username, google_config=google_config)
+    if output_flower_count:
+        await messages[0].answer(text=LEXICON['success'].format(str(output_flower_count)))
+    else:
+        await messages[0].answer(text=LEXICON['error'])
+
+
 # Этот хэндлер будет срабатывать на отправку боту фото в виде документа или просто фото
 @router.message(or_f(and_f(F.document, lambda msg: msg.document.mime_type.startswith('image/')), F.photo))
 async def process_doc(message: Message, bot: Bot, google_config: GoogleDrive):
     await message.answer(text=LEXICON['loading'])
     content = message.document if message.document else message.photo[-1]
-    output_flower_count = await save_to_google_drive(username=message.from_user.username,
-                                                     content=content, bot=bot,
-                                                     google_config=google_config)
+    output_flower_count = await save_to_google_drive(username=message.from_user.username, content=content,
+                                                     content_in_group=False, bot=bot, google_config=google_config)
     if output_flower_count:
         await message.answer(text=LEXICON['success'].format(str(output_flower_count)))
     else:

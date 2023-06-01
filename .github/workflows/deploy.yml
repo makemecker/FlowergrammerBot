@@ -18,7 +18,7 @@ jobs:
             script: |
               cd FlowergrammerBot
               echo "Stopping bot..."
-              pkill -f bot.py;
+              killall bot.py || true
               echo "Pulling latest code..."
               git pull
               echo "Sleeping for 3 seconds..."

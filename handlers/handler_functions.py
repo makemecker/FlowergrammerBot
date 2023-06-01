@@ -44,7 +44,8 @@ async def get_rating(google_config: GoogleDrive):
     return rating_text
 
 
-async def save_to_google_drive(username: str, content: Document | PhotoSize, bot: Bot, google_config: GoogleDrive):
+async def save_to_google_drive(username: str, content: Document | PhotoSize, content_in_group: bool, bot: Bot,
+                               google_config: GoogleDrive):
     service = await google_api_client(google_config=google_config)
 
     user_folder_id = await get_username_folder_id(service=service,
@@ -74,9 +75,10 @@ async def save_to_google_drive(username: str, content: Document | PhotoSize, bot
         file_id = file.get('id')
 
         if file_id:
+            if content_in_group:
+                return True
             return await flower_count(username=username, google_config=google_config)
-        else:
-            return False
+        return False
 
     except HttpError:
         return False
