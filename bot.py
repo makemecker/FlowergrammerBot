@@ -3,6 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from config import Config, load_config
 from handlers import admin_handlers, user_handlers
+from aiogram.fsm.storage.memory import MemoryStorage
 
 
 # Функция конфигурирования и запуска бота
@@ -12,7 +13,8 @@ async def main() -> None:
 
     # Инициализируем бот и диспетчер
     bot: Bot = Bot(token=config.tg_bot.token)
-    dp: Dispatcher = Dispatcher(google_config=config.google_drive, admins=config.tg_bot.admin_ids)
+    storage = MemoryStorage()
+    dp: Dispatcher = Dispatcher(google_config=config.google_drive, admins=config.tg_bot.admin_ids, storage=storage)
 
     # Регистрируем роутеры в диспетчере
     dp.include_routers(admin_handlers.router, user_handlers.router)

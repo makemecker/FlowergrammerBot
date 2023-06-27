@@ -18,9 +18,11 @@ jobs:
             script: |
               cd FlowergrammerBot
               echo "Stopping bot..."
-              killall bot.py || true
+              pkill -f 'python bot.py'
               echo "Pulling latest code..."
               git pull
+              echo "Installing dependencies..."
+              /home/master/.pyenv/shims/pip install -r requirements.txt
               echo "Sleeping for 3 seconds..."
               sleep 3
               echo "Starting bot..."

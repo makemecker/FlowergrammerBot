@@ -5,3 +5,4 @@ credentials.json
 __pycache__
 handlers/__pycache__
 bot.log
+/yolo_weights.pt
