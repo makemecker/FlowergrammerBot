@@ -30,6 +30,7 @@ if __name__ == '__main__':
         level=logging.ERROR,  # Уровень логирования (в данном случае, только ошибки)
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',  # Формат записи логов
         filename='bot.log',  # Имя файла логов
+        filemode='w'  # Затирание файла с новым запуском
     )
     # Запуск бота
     asyncio.run(main())

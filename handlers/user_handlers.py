@@ -86,16 +86,19 @@ async def album_handler(messages: List[Message], bot: Bot, google_config: Google
 
         async def process_predict(prediction):
             predict_image, predict_directory, dir_file_ids = prediction
-            await messages[0].answer_photo(photo=predict_image)
+            if len(dir_file_ids) == 1:
+                await messages[0].answer(text=LEXICON['nothing'])
+            else:
+                await messages[0].answer_photo(photo=predict_image)
+                all_dir_file_ids.append(dir_file_ids)
             rmtree(predict_directory, ignore_errors=True)
-            all_dir_file_ids.append(dir_file_ids)
 
         await asyncio.gather(*[process_predict(cur_predict) for cur_predict in all_predicts])
-
-        await state.update_data(dir_file_ids=all_dir_file_ids)
-        markup = create_inline_kb('good', 'bad')
-        mark_message = await messages[0].answer(text=LEXICON['mark'], reply_markup=markup)
-        await state.update_data(mark_message=mark_message)
+        if len(all_dir_file_ids):
+            await state.update_data(dir_file_ids=all_dir_file_ids)
+            markup = create_inline_kb('good', 'bad')
+            mark_message = await messages[0].answer(text=LEXICON['mark'], reply_markup=markup)
+            await state.update_data(mark_message=mark_message)
     else:
         await messages[0].answer(text=LEXICON['error'])
 
@@ -118,15 +121,19 @@ async def process_doc_and_photo(message: Message, bot: Bot, google_config: Googl
     if output_flower_count:
         predict_image, predict_directory, dir_file_ids = await predict(content=content, bot=bot, username=username,
                                                                        google_config=google_config)
-        await state.update_data(dir_file_ids=dir_file_ids)
+        if len(dir_file_ids) == 1:
+            await message.answer(text=LEXICON['nothing'])
+            await message.answer(text=LEXICON['success'].format(output_flower_count))
+        else:
+            await state.update_data(dir_file_ids=dir_file_ids)
 
-        await message.answer(text=LEXICON['success'].format(output_flower_count))
-        await message.answer_photo(photo=predict_image)
+            await message.answer(text=LEXICON['success'].format(output_flower_count))
+            await message.answer_photo(photo=predict_image)
 
+            markup = create_inline_kb('good', 'bad')
+            mark_message = await message.answer(text=LEXICON['mark'], reply_markup=markup)
+            await state.update_data(mark_message=mark_message)
         rmtree(predict_directory, ignore_errors=True)
-        markup = create_inline_kb('good', 'bad')
-        mark_message = await message.answer(text=LEXICON['mark'], reply_markup=markup)
-        await state.update_data(mark_message=mark_message)
     else:
         await message.answer(text=LEXICON['error'])
 

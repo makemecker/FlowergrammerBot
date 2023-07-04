@@ -169,7 +169,7 @@ async def predict(content: Document | PhotoSize, bot: Bot, username: str,
 
     # Предсказание с использованием модели YOLO
     predict_directory: str = model.predict(f'https://api.telegram.org/file/bot{bot.token}/{file_path}', save=True,
-                                           name=file_unique_id, save_txt=True)[0].save_dir
+                                           name=file_unique_id, save_txt=True, conf=0.01)[0].save_dir
 
     file_name: str = file_path.split('/')[-1]
     predict_image_path: str = os.path.join(predict_directory, file_name)
@@ -181,13 +181,18 @@ async def predict(content: Document | PhotoSize, bot: Bot, username: str,
     labels_path = os.path.join(predict_directory, 'labels')
     txt_path = os.path.join(labels_path, file_name.split('.')[0] + '.txt')
     unique_id_txt_path = os.path.join(labels_path, file_unique_id + '.txt')
-    os.rename(txt_path, unique_id_txt_path)
+    if os.path.exists(txt_path):
+        os.rename(txt_path, unique_id_txt_path)
+    else:
+        unique_id_txt_path = None
     dir_file_ids = []
 
     # Сохранение файла и получение идентификаторов файлов в Google Drive
     for file in [unique_id_image_path, unique_id_txt_path]:
-        dir_file_ids.append(await save_to_google_drive(username=username, content=file, content_in_group=False, bot=bot,
-                                                       google_config=google_config, prediction=True))
+        if file is not None:
+            dir_file_ids.append(
+                await save_to_google_drive(username=username, content=file, content_in_group=False, bot=bot,
+                                           google_config=google_config, prediction=True))
 
     return predict_image, predict_directory, dir_file_ids
 
