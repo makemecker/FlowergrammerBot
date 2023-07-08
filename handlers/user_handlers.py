@@ -13,7 +13,6 @@ from aiogram.types import Document, PhotoSize
 from keyboards.kb_generator import create_inline_kb
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
-import asyncio
 
 # Инициализируем роутер уровня модуля
 router: Router = Router()
@@ -71,21 +70,19 @@ async def album_handler(messages: List[Message], bot: Bot, google_config: Google
     username: str = messages[0].from_user.username
     all_predicts: list = []
 
-    async def process_message(message: Message):
+    for message in messages:
         content: Document | PhotoSize = message.document or message.photo[-1]
         await save_to_google_drive(username=username, content=content, content_in_group=True,
                                    bot=bot, google_config=google_config)
         all_predicts.append(await predict(content=content, bot=bot, username=username, google_config=google_config))
-
-    await asyncio.gather(*[process_message(message) for message in messages])
 
     output_flower_count = await flower_count(username=username, google_config=google_config)
     if output_flower_count:
         await messages[0].answer(text=LEXICON['success'].format(output_flower_count))
         all_dir_file_ids = []
 
-        async def process_predict(prediction):
-            predict_image, predict_directory, dir_file_ids = prediction
+        for cur_predict in all_predicts:
+            predict_image, predict_directory, dir_file_ids = cur_predict
             if len(dir_file_ids) == 1:
                 await messages[0].answer(text=LEXICON['nothing'])
             else:
@@ -93,7 +90,6 @@ async def album_handler(messages: List[Message], bot: Bot, google_config: Google
                 all_dir_file_ids.append(dir_file_ids)
             rmtree(predict_directory, ignore_errors=True)
 
-        await asyncio.gather(*[process_predict(cur_predict) for cur_predict in all_predicts])
         if len(all_dir_file_ids):
             await state.update_data(dir_file_ids=all_dir_file_ids)
             markup = create_inline_kb('good', 'bad')
@@ -151,7 +147,6 @@ async def process_mark(callback: CallbackQuery, mark: str, state: FSMContext, go
                 await move_predict(to_dir=mark, preds_dir_id=preds_dir_id, file_id=file_id, google_config=google_config)
     await callback.message.edit_text(LEXICON['thanks'])
     await state.clear()
-    await callback.answer()
 
 
 # Этот хэндлер будет срабатывать на отправку остальных типов сообщений
