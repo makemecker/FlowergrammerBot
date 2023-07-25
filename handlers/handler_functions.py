@@ -12,6 +12,9 @@ from aiogram.types import Message
 from ultralytics import YOLO
 from aiogram.types import FSInputFile
 import os
+import requests
+from PIL import Image
+import pillow_heif
 
 
 # Собственный фильтр, проверяющий юзера на админа
@@ -67,8 +70,9 @@ async def save_to_google_drive(username: str, content: Document | PhotoSize | st
         }
         if prediction:
             if content.endswith('.txt'):
-                file_bytes = content.encode('utf-8')
-                mimetype = 'text/plain'
+                with open(content, 'rb') as file:
+                    file_bytes = file.read()
+                    mimetype = 'text/plain'
             else:
                 with open(content, 'rb') as file:
                     file_bytes = file.read()
@@ -158,6 +162,14 @@ async def get_or_create_folder(service: discovery.Resource, folder_name: str, pa
         return folder.get('id')
 
 
+async def get_file_extension(filename: str) -> str:
+    """Возвращает расширение файла в нижнем регистре"""
+    # Разделяем имя файла на имя и расширение
+    name, extension = os.path.splitext(filename)
+    # Преобразуем расширение в нижний регистр и удаляем точку, если она есть
+    return extension.lower().lstrip(".")
+
+
 async def predict(content: Document | PhotoSize, bot: Bot, username: str,
                   google_config: GoogleDrive) -> tuple[FSInputFile, str, list]:
     current_directory: str = os.getcwd()
@@ -167,29 +179,50 @@ async def predict(content: Document | PhotoSize, bot: Bot, username: str,
     file_path: str = (await bot.get_file(content.file_id)).file_path
     file_unique_id = content.file_unique_id
 
+    # URL изображения
+    image_url = f'https://api.telegram.org/file/bot{bot.token}/{file_path}'
+
+    # Временная папка для сохранения изображения и результатов предсказания
+    temp_dir = 'temp'
+    os.makedirs(temp_dir, exist_ok=True)
+
+    unique_filename = f"{file_unique_id}.{await get_file_extension(file_path)}"
+    # Загрузка изображения и сохранение во временной папке с расширением в нижнем регистре
+    temp_image_path = os.path.join(temp_dir, unique_filename)
+    with open(temp_image_path, 'wb') as f:
+        response = requests.get(image_url)
+        f.write(response.content)
+
+    # Преобразование HEIC изображений в png
+    if await get_file_extension(file_path) == "heic":
+        heif_file = pillow_heif.read_heif(temp_image_path)
+        image = Image.frombytes(
+            heif_file.mode,
+            heif_file.size,
+            heif_file.data,
+            "raw",
+        )
+        os.remove(temp_image_path)
+        unique_filename = f"{file_unique_id}.png"
+        temp_image_path = os.path.join(temp_dir, unique_filename)
+        image.save(temp_image_path, format("png"))
+
     # Предсказание с использованием модели YOLO
-    predict_directory: str = model.predict(f'https://api.telegram.org/file/bot{bot.token}/{file_path}', save=True,
-                                           name=file_unique_id, save_txt=True, conf=0.01)[0].save_dir
+    predict_directory: str = model.predict(temp_image_path, save=True, name=file_unique_id, save_txt=True,
+                                           conf=0.01)[0].save_dir
 
-    file_name: str = file_path.split('/')[-1]
-    predict_image_path: str = os.path.join(predict_directory, file_name)
-    unique_id_image_path = os.path.join(predict_directory, file_unique_id + '.' + file_name.split('.')[-1])
-    os.rename(predict_image_path, unique_id_image_path)
-    predict_image: FSInputFile = FSInputFile(unique_id_image_path)
-    os.remove(os.path.join(current_directory, file_name))
+    # Удаление временных файлов
+    os.remove(temp_image_path)
 
-    labels_path = os.path.join(predict_directory, 'labels')
-    txt_path = os.path.join(labels_path, file_name.split('.')[0] + '.txt')
-    unique_id_txt_path = os.path.join(labels_path, file_unique_id + '.txt')
-    if os.path.exists(txt_path):
-        os.rename(txt_path, unique_id_txt_path)
-    else:
-        unique_id_txt_path = None
+    predict_image_path: str = os.path.join(predict_directory, unique_filename)
+    predict_image: FSInputFile = FSInputFile(predict_image_path)
+
+    unique_id_txt_path = os.path.join(predict_directory, 'labels', f"{file_unique_id}.txt")
     dir_file_ids = []
 
     # Сохранение файла и получение идентификаторов файлов в Google Drive
-    for file in [unique_id_image_path, unique_id_txt_path]:
-        if file is not None:
+    for file in [predict_image_path, unique_id_txt_path]:
+        if os.path.exists(file):
             dir_file_ids.append(
                 await save_to_google_drive(username=username, content=file, content_in_group=False, bot=bot,
                                            google_config=google_config, prediction=True))

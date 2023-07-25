@@ -13,6 +13,7 @@ from aiogram.types import Document, PhotoSize
 from keyboards.kb_generator import create_inline_kb
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
+import os
 
 # Инициализируем роутер уровня модуля
 router: Router = Router()
@@ -86,7 +87,11 @@ async def album_handler(messages: List[Message], bot: Bot, google_config: Google
             if len(dir_file_ids) == 1:
                 await messages[0].answer(text=LEXICON['nothing'])
             else:
-                await messages[0].answer_photo(photo=predict_image)
+                # Проверяем, что размер изображения меньше 19 Мбайт, в противном случае направляем его в качестве файла
+                if os.path.getsize(predict_image.path) > 19922944:
+                    await messages[0].answer_document(document=predict_image)
+                else:
+                    await messages[0].answer_photo(photo=predict_image)
                 all_dir_file_ids.append(dir_file_ids)
             rmtree(predict_directory, ignore_errors=True)
 
@@ -124,7 +129,12 @@ async def process_doc_and_photo(message: Message, bot: Bot, google_config: Googl
             await state.update_data(dir_file_ids=dir_file_ids)
 
             await message.answer(text=LEXICON['success'].format(output_flower_count))
-            await message.answer_photo(photo=predict_image)
+
+            # Проверяем, что размер изображения меньше 19 Мбайт, в противном случае направляем его в качестве файла
+            if os.path.getsize(predict_image.path) > 19922944:
+                await message.answer_document(document=predict_image)
+            else:
+                await message.answer_photo(photo=predict_image)
 
             markup = create_inline_kb('good', 'bad')
             mark_message = await message.answer(text=LEXICON['mark'], reply_markup=markup)
